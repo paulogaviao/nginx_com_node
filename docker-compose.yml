@@ -1,0 +1,63 @@
+version: '3'
+
+services:
+
+  node:
+    build:
+      context: ./node
+    image: paulogaviao/node
+    volumes:
+     - .:/usr/src/app/
+     - exclude:/usr/src/app/node_modules/
+    container_name: node
+    restart: always
+    command: node ./node/index.js
+    tty: true
+    networks: 
+      - nodenet
+    ports:
+     - "3000:3000"
+    depends_on: 
+      mysql:
+        condition: service_healthy
+
+  nginx:
+    build:
+      context: ./nginx
+    image: paulogaviao/nginx
+    container_name: nginx
+    networks: 
+      - nodenet
+    ports:
+      - "8080:80"
+    depends_on: 
+      - node
+      - mysql
+  
+  mysql:
+    image: mysql:5.7.16
+    command: --innodb-use-native-aio=0
+    container_name: mysql
+    tty: true
+    volumes:
+      - ./mysql:/var/lib/mysql
+      - ./db_scripts:/docker-entrypoint-initdb.d
+    environment: 
+      - MYSQL_DATABASE=nodedb
+      - MYSQL_ROOT_PASSWORD=root
+    networks: 
+      - nodenet
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: mysqladmin ping -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+      interval: 5s
+      timeout: 5s
+      retries: 55
+
+networks: 
+  nodenet:
+    driver: bridge
+
+volumes:
+    exclude:
