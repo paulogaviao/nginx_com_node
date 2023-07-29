@@ -1,14 +1,13 @@
 version: '3'
 
 services:
-
   node:
     build:
       context: ./node
     image: paulogaviao/node
     volumes:
-     - .:/usr/src/app/
-     - exclude:/usr/src/app/node_modules/
+      - .:/usr/src/app/
+      - exclude:/usr/src/app/node_modules/
     container_name: node
     restart: always
     command: node ./node/index.js
@@ -16,7 +15,7 @@ services:
     networks: 
       - nodenet
     ports:
-     - "3000:3000"
+      - "3000:3000"
     depends_on: 
       mysql:
         condition: service_healthy
@@ -60,4 +59,4 @@ networks:
     driver: bridge
 
 volumes:
-    exclude:
+  exclude:
