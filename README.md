@@ -25,7 +25,7 @@ Abra seu navegador e digite:
 
 http://localhost:8080
 
-apresentara os informes 
+apresentará os informes:
 
 Full Cycle Rocks!
 Nomes
